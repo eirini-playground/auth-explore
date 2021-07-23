@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: uaa-tls
+spec:
+  tls:
+  - hosts:
+      - 172.17.0.1.nip.io
+    secretName: uaa-tls
+  rules:
+  - host: 172.17.0.1.nip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: uaa
+            port:
+              number: 8080
+

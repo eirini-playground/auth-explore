@@ -1,0 +1,169 @@
+# code.cloudfoundry.org/bytefmt v0.0.0-20210608160410-67692ebc98de
+## explicit
+code.cloudfoundry.org/bytefmt
+# code.cloudfoundry.org/cli v7.1.0+incompatible
+## explicit
+code.cloudfoundry.org/cli/actor/actionerror
+code.cloudfoundry.org/cli/api/cloudcontroller/ccerror
+code.cloudfoundry.org/cli/api/cloudcontroller/ccv2/constant
+code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant
+code.cloudfoundry.org/cli/api/plugin/pluginerror
+code.cloudfoundry.org/cli/api/uaa
+code.cloudfoundry.org/cli/api/uaa/constant
+code.cloudfoundry.org/cli/api/uaa/internal
+code.cloudfoundry.org/cli/command/translatableerror
+code.cloudfoundry.org/cli/plugin
+code.cloudfoundry.org/cli/plugin/models
+code.cloudfoundry.org/cli/types
+code.cloudfoundry.org/cli/util
+code.cloudfoundry.org/cli/util/clissh/ssherror
+code.cloudfoundry.org/cli/util/configv3
+code.cloudfoundry.org/cli/util/download
+code.cloudfoundry.org/cli/util/manifest
+code.cloudfoundry.org/cli/util/v6manifestparser
+code.cloudfoundry.org/cli/version
+# code.cloudfoundry.org/cli-plugin-repo v0.0.0-20210527163012-bfc589866b5c
+## explicit
+# code.cloudfoundry.org/go-log-cache v1.0.0
+## explicit
+# code.cloudfoundry.org/go-loggregator v7.4.0+incompatible
+## explicit
+# code.cloudfoundry.org/gofileutils v0.0.0-20170111115228-4d0c80011a0f
+## explicit
+# code.cloudfoundry.org/jsonry v1.1.3
+## explicit
+# code.cloudfoundry.org/rfc5424 v0.0.0-20201103192249-000122071b78
+## explicit
+# code.cloudfoundry.org/tlsconfig v0.0.0-20210615191307-5d92ef3894a7
+code.cloudfoundry.org/tlsconfig
+# code.cloudfoundry.org/ykk v0.0.0-20170424192843-e4df4ce2fd4d
+## explicit
+# github.com/SermoDigital/jose v0.9.1
+## explicit
+github.com/SermoDigital/jose
+github.com/SermoDigital/jose/crypto
+github.com/SermoDigital/jose/jws
+github.com/SermoDigital/jose/jwt
+# github.com/blang/semver v3.5.1+incompatible
+github.com/blang/semver
+# github.com/bmatcuk/doublestar v1.3.4
+github.com/bmatcuk/doublestar
+# github.com/bmizerany/pat v0.0.0-20210406213842-e4b6760bdd6f
+## explicit
+# github.com/charlievieth/fs v0.0.1
+github.com/charlievieth/fs
+# github.com/cloudfoundry/bosh-cli v6.4.1+incompatible
+## explicit
+github.com/cloudfoundry/bosh-cli/director/template
+# github.com/cloudfoundry/bosh-utils v0.0.264
+## explicit
+github.com/cloudfoundry/bosh-utils/errors
+github.com/cloudfoundry/bosh-utils/logger
+github.com/cloudfoundry/bosh-utils/system
+# github.com/coreos/go-oidc/v3 v3.0.0
+## explicit
+github.com/coreos/go-oidc/v3/oidc
+# github.com/cppforlife/go-patch v0.2.0
+## explicit
+github.com/cppforlife/go-patch/patch
+# github.com/cyphar/filepath-securejoin v0.2.3
+## explicit
+# github.com/fatih/color v1.12.0
+## explicit
+# github.com/golang/protobuf v1.5.2
+github.com/golang/protobuf/proto
+# github.com/google/go-querystring v1.1.0
+## explicit
+# github.com/grpc-ecosystem/grpc-gateway v1.16.0
+## explicit
+# github.com/jessevdk/go-flags v1.5.0
+github.com/jessevdk/go-flags
+# github.com/lunixbochs/vtclean v1.0.0
+## explicit
+# github.com/mattn/go-runewidth v0.0.13
+## explicit
+github.com/mattn/go-runewidth
+# github.com/moby/moby v20.10.7+incompatible
+## explicit
+# github.com/moby/term v0.0.0-20210619224110-3f7ff695adc6
+## explicit
+# github.com/nirasan/go-oauth-pkce-code-verifier v0.0.0-20170819232839-0fbfe93532da
+## explicit
+github.com/nirasan/go-oauth-pkce-code-verifier
+# github.com/onsi/gomega v1.14.0
+## explicit
+# github.com/rivo/uniseg v0.2.0
+github.com/rivo/uniseg
+# github.com/sabhiram/go-gitignore v0.0.0-20201211210132-54b8a0bf510f
+## explicit
+# github.com/sirupsen/logrus v1.8.1
+## explicit
+github.com/sirupsen/logrus
+# github.com/tedsuo/rata v1.0.0
+## explicit
+# github.com/vito/go-interact v1.0.0
+## explicit
+# golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
+golang.org/x/crypto/ed25519
+golang.org/x/crypto/ed25519/internal/edwards25519
+golang.org/x/crypto/pbkdf2
+golang.org/x/crypto/ssh/terminal
+# golang.org/x/net v0.0.0-20210614182718-04defd469f4e
+golang.org/x/net/context
+golang.org/x/net/context/ctxhttp
+# golang.org/x/oauth2 v0.0.0-20210628180205-a41e5a781914
+## explicit
+golang.org/x/oauth2
+golang.org/x/oauth2/internal
+# golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c
+golang.org/x/sys/internal/unsafeheader
+golang.org/x/sys/plan9
+golang.org/x/sys/unix
+golang.org/x/sys/windows
+# golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1
+golang.org/x/term
+# google.golang.org/appengine v1.6.6
+google.golang.org/appengine/internal
+google.golang.org/appengine/internal/base
+google.golang.org/appengine/internal/datastore
+google.golang.org/appengine/internal/log
+google.golang.org/appengine/internal/remote_api
+google.golang.org/appengine/internal/urlfetch
+google.golang.org/appengine/urlfetch
+# google.golang.org/protobuf v1.26.0
+google.golang.org/protobuf/encoding/prototext
+google.golang.org/protobuf/encoding/protowire
+google.golang.org/protobuf/internal/descfmt
+google.golang.org/protobuf/internal/descopts
+google.golang.org/protobuf/internal/detrand
+google.golang.org/protobuf/internal/encoding/defval
+google.golang.org/protobuf/internal/encoding/messageset
+google.golang.org/protobuf/internal/encoding/tag
+google.golang.org/protobuf/internal/encoding/text
+google.golang.org/protobuf/internal/errors
+google.golang.org/protobuf/internal/filedesc
+google.golang.org/protobuf/internal/filetype
+google.golang.org/protobuf/internal/flags
+google.golang.org/protobuf/internal/genid
+google.golang.org/protobuf/internal/impl
+google.golang.org/protobuf/internal/order
+google.golang.org/protobuf/internal/pragma
+google.golang.org/protobuf/internal/set
+google.golang.org/protobuf/internal/strs
+google.golang.org/protobuf/internal/version
+google.golang.org/protobuf/proto
+google.golang.org/protobuf/reflect/protodesc
+google.golang.org/protobuf/reflect/protoreflect
+google.golang.org/protobuf/reflect/protoregistry
+google.golang.org/protobuf/runtime/protoiface
+google.golang.org/protobuf/runtime/protoimpl
+google.golang.org/protobuf/types/descriptorpb
+# gopkg.in/cheggaaa/pb.v1 v1.0.28
+## explicit
+gopkg.in/cheggaaa/pb.v1
+# gopkg.in/square/go-jose.v2 v2.5.1
+gopkg.in/square/go-jose.v2
+gopkg.in/square/go-jose.v2/cipher
+gopkg.in/square/go-jose.v2/json
+# gopkg.in/yaml.v2 v2.4.0
+gopkg.in/yaml.v2

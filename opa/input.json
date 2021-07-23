@@ -1,0 +1,89 @@
+{
+  "apiVersion": "admission.k8s.io/v1beta1",
+  "kind": "AdmissionReview",
+  "request": {
+    "dryRun": false,
+    "kind": {
+      "group": "extensions",
+      "kind": "Ingress",
+      "version": "v1beta1"
+    },
+    "name": "ingress-ok",
+    "namespace": "production",
+    "object": {
+      "apiVersion": "extensions/v1beta1",
+      "kind": "Ingress",
+      "metadata": {
+        "creationTimestamp": "2021-07-01T14:33:17Z",
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "extensions/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                "f:rules": {}
+              }
+            },
+            "manager": "kubectl-create",
+            "operation": "Update",
+            "time": "2021-07-01T14:33:17Z"
+          }
+        ],
+        "name": "ingress-ok",
+        "namespace": "production",
+        "uid": "a4f6acba-8da8-48a9-8699-7c3b800137c7"
+      },
+      "spec": {
+        "rules": [
+          {
+            "host": "signin.acmecorp.comx",
+            "http": {
+              "paths": [
+                {
+                  "backend": {
+                    "serviceName": "nginx",
+                    "servicePort": 80
+                  },
+                  "pathType": "ImplementationSpecific"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    "oldObject": null,
+    "operation": "CREATE",
+    "options": {
+      "apiVersion": "meta.k8s.io/v1",
+      "fieldManager": "kubectl-create",
+      "kind": "CreateOptions"
+    },
+    "requestKind": {
+      "group": "extensions",
+      "kind": "Ingress",
+      "version": "v1beta1"
+    },
+    "requestResource": {
+      "group": "extensions",
+      "resource": "ingresses",
+      "version": "v1beta1"
+    },
+    "resource": {
+      "group": "extensions",
+      "resource": "ingresses",
+      "version": "v1beta1"
+    },
+    "uid": "60f3a27d-e3f4-4533-a85a-6910acc60f09",
+    "userInfo": {
+      "groups": [
+        "system:authenticated"
+      ],
+      "username": "oidc:alice"
+    }
+  }
+}

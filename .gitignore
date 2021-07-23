@@ -1,0 +1,9 @@
+opa/ca.crt
+opa/ca.key
+opa/ca.srl
+opa/server.crt
+opa/server.csr
+dex-auth/ssl
+dex-auth-public-client/ssl
+run-cfshim/ssl
+oidc-login-plugin/oidc-login-plugin

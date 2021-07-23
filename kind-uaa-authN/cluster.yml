@@ -1,0 +1,34 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  extraMounts:
+  - hostPath: ./uaa
+    containerPath: /uaa
+  kubeadmConfigPatches:
+  - |
+    kind: InitConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "ingress-ready=true"
+  - |
+    kind: ClusterConfiguration
+    apiServer:
+      extraVolumes:
+        - name: uaa-volume
+          hostPath: /uaa
+          mountPath: /uaa
+      extraArgs:
+        oidc-issuer-url: https://172.17.0.1.nip.io/oauth/token
+        oidc-client-id: kubernetes
+        oidc-ca-file: /uaa/uaa.crt
+        oidc-username-claim: user_name
+        oidc-username-prefix: "oidc:"
+
+  extraPortMappings:
+  - containerPort: 80
+    hostPort: 80
+    protocol: TCP
+  - containerPort: 443
+    hostPort: 443
+    protocol: TCP

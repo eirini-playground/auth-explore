@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function getHTTP(theUrl)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+    xmlHttp.send( null );
+    return xmlHttp.responseText;
+}
+
+function main() {
+  vals = location.hash.substring(1).split('&').reduce(function (res, item) {
+      var parts = item.split('=');
+      res[parts[0]] = parts[1];
+      return res;
+  }, {});
+
+    responseText = getHTTP(location.protocol + "//" + location.host + location.pathname + "?id_token=" + vals["id_token"])
+    document.getElementById("message-text").innerHTML = responseText
+
+}
+</script>
+</head>
+
+<body onload="main()">
+<h1 id="message-text">Hello Eirini!</h1>
+</body>
+
+</html>
+
