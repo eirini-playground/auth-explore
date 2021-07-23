@@ -5,5 +5,7 @@ opa/server.crt
 opa/server.csr
 dex-auth/ssl
 dex-auth-public-client/ssl
+dex-pinniped/ssl
+dex-pinniped/terraform/.terraform*
 run-cfshim/ssl
 oidc-login-plugin/oidc-login-plugin
