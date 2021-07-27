@@ -83,10 +83,9 @@ func (c *OIDCLoginPlugin) Run(cliConnection plugin.CliConnection, args []string)
 			verifier: verifier,
 			provider: provider,
 			client:   client,
-
-			done: make(chan struct{}),
 		}
 
+		done := make(chan struct{})
 		scopes := []string{"openid", "profile", "email"}
 		codeChallenge := codeVerifier.CodeChallengeS256()
 
@@ -108,14 +107,26 @@ func (c *OIDCLoginPlugin) Run(cliConnection plugin.CliConnection, args []string)
 
 		fmt.Printf("Please navigate to the following URL in your browser:\n%s\t\n", authCodeURL)
 
-		http.Handle(redirectURI.Path, cbHandler)
+		m := http.NewServeMux()
+		s := http.Server{Addr: listenURL.Host, Handler: m}
+		m.HandleFunc(redirectURI.Path, func(w http.ResponseWriter, r *http.Request) {
+			cbHandler.ServeHTTP(w, r)
+		})
+		s.ConnState = func(_ net.Conn, state http.ConnState) {
+
+			if state == http.StateIdle {
+				done <- struct{}{}
+			}
+		}
 
 		go func() {
-			log.Fatal(http.ListenAndServe(listenURL.Host, nil))
+			if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+				log.Fatal(err)
+			}
 		}()
 
-		<-cbHandler.done
-
+		<-done
+		s.Shutdown(context.Background())
 	}
 }
 
@@ -130,8 +141,6 @@ type callbackHandler struct {
 	provider *oidc.Provider
 
 	client *http.Client
-
-	done chan struct{}
 }
 
 func (h *callbackHandler) oauth2Config(scopes []string) *oauth2.Config {
@@ -227,8 +236,6 @@ func (h *callbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprintf(w, "Authentication successful! You can close this window!")
-
-	close(h.done)
 }
 
 func httpClientForRootCAs(rootCAs string) (*http.Client, error) {
