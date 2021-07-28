@@ -18,7 +18,7 @@ keyUsage = nonRepudiation, digitalSignature, keyEncipherment
 subjectAltName = @alt_names
 
 [alt_names]
-DNS.1 = dex.vcap.me
+DNS.1 = localhost
 EOF
 
 openssl genrsa -out "$SSL_DIR/ca-key.pem" 2048

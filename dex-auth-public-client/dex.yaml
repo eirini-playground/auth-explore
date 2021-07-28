@@ -58,7 +58,7 @@ spec:
             path: config.yaml
       - name: tls
         secret:
-          secretName: dex.vcap.me.tls
+          secretName: localhost.tls
 ---
 kind: ConfigMap
 apiVersion: v1
@@ -67,7 +67,7 @@ metadata:
   namespace: dex
 data:
   config.yaml: |
-    issuer: https://dex.vcap.me:32000
+    issuer: https://localhost:32000
     storage:
       type: kubernetes
       config:
@@ -83,7 +83,7 @@ data:
       config:
         clientID: $GITHUB_CLIENT_ID
         clientSecret: $GITHUB_CLIENT_SECRET
-        redirectURI: https://dex.vcap.me:32000/callback
+        redirectURI: https://localhost:32000/callback
         org: kubernetes
     oauth2:
       skipApprovalScreen: true

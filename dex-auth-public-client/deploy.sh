@@ -33,7 +33,7 @@ nodes:
           hostPath: /ssl
           mountPath: /etc/dex-ssl
       extraArgs:
-        oidc-issuer-url: https://dex.vcap.me:32000
+        oidc-issuer-url: https://localhost:32000
         oidc-client-id: cf-cli
         oidc-ca-file: /etc/dex-ssl/ca.pem
         oidc-username-claim: preferred_username
@@ -47,7 +47,7 @@ EOF
 kind create cluster --name dex-play-public-client --config "$KIND_CONF"
 
 kubectl create namespace dex
-kubectl create secret --namespace dex tls dex.vcap.me.tls --cert="$SCRIPT_DIR/ssl/cert.pem" --key="$SCRIPT_DIR/ssl/key.pem"
+kubectl create secret --namespace dex tls localhost.tls --cert="$SCRIPT_DIR/ssl/cert.pem" --key="$SCRIPT_DIR/ssl/key.pem"
 
 kubectl create secret --namespace dex \
   generic github-client \
