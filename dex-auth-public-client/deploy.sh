@@ -17,10 +17,13 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
+  image: kindest/node:v1.20.2
   extraMounts:
   - containerPath: /ssl
     hostPath: $SCRIPT_DIR/ssl
     readOnly: true
+- role: worker
+  image: kindest/node:v1.20.2
   kubeadmConfigPatches:
   - |
     kind: ClusterConfiguration
