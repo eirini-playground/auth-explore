@@ -18,7 +18,7 @@ kind: ClusterRole
 metadata:
   name: app-viewer
 rules:
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["apps"]
   verbs: ["get", "watch", "list"]
 ---

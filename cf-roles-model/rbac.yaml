@@ -3,22 +3,22 @@ kind: ClusterRole
 metadata:
   name: admin
 rules:
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["apps"]
   verbs: ["get", "watch", "list", "create", "delete", "update", "patch"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["droplet"]
   verbs: ["get", "watch", "list", "create", "delete", "update", "patch"] # update is limited to labels and annotations. No other role can do otherwise, so this can be handled in a custom webhook or using OPA.
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["builds"]
   verbs: ["get", "watch", "list", "create", "delete", "update", "patch"] # can only update labels and annotations. State and lifecycle.data.image can only be updated by BuildStateUpdaters. Can be done using OPA
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["packages"]
   verbs: ["get", "watch", "list", "create", "delete", "update", "patch"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["processes"]
   verbs: ["get", "watch", "list", "create", "delete", "update", "patch"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["tasks"]
   verbs: ["get", "watch", "list", "create", "update", "patch"]
 - apiGroups: [""]
@@ -31,22 +31,22 @@ kind: ClusterRole
 metadata:
   name: admin-read-only
 rules:
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["apps"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["droplet"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["builds"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["packages"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["processes"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["tasks"]
   verbs: ["get", "watch", "list"]
 - apiGroups: [""]
@@ -59,22 +59,22 @@ kind: ClusterRole
 metadata:
   name: global-auditor
 rules:
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["apps"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["droplet"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["builds"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["packages"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["processes"]
   verbs: ["get", "watch", "list"] # some fields are redacted. This is not possible with k8s API unless those fields are in distinct resource
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["tasks"]
   verbs: ["get", "watch", "list"] # `command` field redacted. Not possible unless command is stored in a distinct resource
 ---
@@ -83,22 +83,22 @@ kind: ClusterRole
 metadata:
   name: org-manager
 rules:
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["apps"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["droplet"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["builds"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["packages"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["processes"]
   verbs: ["get", "watch", "list"] # some fields are redacted. This is not possible with k8s API unless those fields are in distinct resource
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["tasks"]
   verbs: ["get", "watch", "list"] # `command` field redacted. Not possible unless command is stored in a distinct resource
 ---
@@ -108,22 +108,22 @@ metadata:
   namespace: default
   name: space-auditor
 rules:
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["apps"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["droplet"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["builds"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["packages"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["processes"]
   verbs: ["get", "watch", "list"] # some fields are redacted. This is not possible with k8s API unless those fields are in distinct resource
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["tasks"]
   verbs: ["get", "watch", "list"] # `command` field redacted. Not possible unless command is stored in a distinct resource
 ---
@@ -133,22 +133,22 @@ metadata:
   namespace: default
   name: space-manager
 rules:
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["apps"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["droplet"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["builds"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["packages"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["processes"]
   verbs: ["get", "watch", "list"] # some fields are redacted. This is not possible with k8s API unless those fields are in distinct resource
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["tasks"]
   verbs: ["get", "watch", "list"] # `command` field redacted. Not possible unless command is stored in a distinct resource
 ---
@@ -158,22 +158,22 @@ metadata:
   namespace: default
   name: space-developer
 rules:
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["apps"]
   verbs: ["get", "watch", "list", "create", "delete", "update", "patch"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["droplet"]
   verbs: ["get", "watch", "list", "create", "delete", "update", "patch"] # update is limited to labels and annotations. No other role can do otherwise, so this can be handled in a custom webhook or using OPA.
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["builds"]
   verbs: ["get", "watch", "list", "create", "delete", "update", "patch"] # can only update labels and annotations. State and lifecycle.data.image can only be updated by BuildStateUpdaters. Can be done using OPA
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["packages"]
   verbs: ["get", "watch", "list", "create", "delete", "update", "patch"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["processes"]
   verbs: ["get", "watch", "list", "create", "delete", "update", "patch"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["tasks"]
   verbs: ["get", "watch", "list", "create", "update", "patch"]
 - apiGroups: [""]
@@ -187,21 +187,21 @@ metadata:
   namespace: default
   name: space-supporter
 rules:
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["apps"]
   verbs: ["get", "watch", "list", "update", "patch"] # the update is only for the currentDropletRef and state. This can be done using OPA
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["droplet"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["builds"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["packages"]
   verbs: ["get", "watch", "list"]
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["processes"]
   verbs: ["get", "watch", "list", "create", "delete", "update", "patch"] # some fields are redacted for read verbs. This is not possible with k8s API unless those fields are in distinct resource
-- apiGroups: ["apps.cloudfoundry.org/v1"]
+- apiGroups: ["apps.cloudfoundry.org"]
   resources: ["tasks"]
   verbs: ["get", "watch", "list", "update", "patch"] # `command` field is redacted, which is not really possible. Only update of `state` field is allowed, which can be managed with OPA.
