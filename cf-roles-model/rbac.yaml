@@ -162,7 +162,7 @@ rules:
   resources: ["apps"]
   verbs: ["get", "watch", "list", "create", "delete", "update", "patch"]
 - apiGroups: ["apps.cloudfoundry.org"]
-  resources: ["droplet"]
+  resources: ["droplets"]
   verbs: ["get", "watch", "list", "create", "delete", "update", "patch"] # update is limited to labels and annotations. No other role can do otherwise, so this can be handled in a custom webhook or using OPA.
 - apiGroups: ["apps.cloudfoundry.org"]
   resources: ["builds"]
