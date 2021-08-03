@@ -2,37 +2,57 @@
 
 set -euxo pipefail
 
-kubectl create namespace opa || true
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
-kubectl config set-context kind-uaa-play --namespace opa
-kubectl config use-context kind-uaa-play
+"$SCRIPT_DIR/gencert.sh"
 
-openssl genrsa -out ca.key 2048
-openssl req -x509 -new -nodes -key ca.key -days 100000 -out ca.crt -subj "/CN=admission_ca"
-cat >server.conf <<EOF
-[req]
-req_extensions = v3_req
-distinguished_name = req_distinguished_name
-prompt = no
-[req_distinguished_name]
-CN = opa.opa.svc
-[ v3_req ]
-basicConstraints = CA:FALSE
-keyUsage = nonRepudiation, digitalSignature, keyEncipherment
-extendedKeyUsage = clientAuth, serverAuth
-subjectAltName = @alt_names
-[alt_names]
-DNS.1 = opa.opa.svc
+KIND_CONF="$(mktemp)"
+trap "rm $KIND_CONF" EXIT
+
+cat <<EOF >>"$KIND_CONF"
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  extraMounts:
+  - containerPath: /ssl
+    hostPath: $SCRIPT_DIR/ssl
+    readOnly: true
+  kubeadmConfigPatches:
+  - |
+    kind: ClusterConfiguration
+    apiServer:
+      extraVolumes:
+        - name: ssl-certs
+          hostPath: /ssl
+          mountPath: /etc/dex-ssl
+      extraArgs:
+        oidc-issuer-url: https://localhost:32000
+        oidc-client-id: example-app
+        oidc-ca-file: /etc/dex-ssl/ca.crt
+        oidc-username-claim: email
+        oidc-username-prefix: "oidc:"
+  extraPortMappings:
+  - containerPort: 32000
+    hostPort: 32000
+    protocol: TCP
 EOF
 
-openssl genrsa -out server.key 2048
-openssl req -new -key server.key -out server.csr -config server.conf
-openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 100000 -extensions v3_req -extfile server.conf
+kind create cluster --name opa-play --config "$KIND_CONF"
 
-kubectl create secret tls opa-server --cert=server.crt --key=server.key
-kubectl apply -f admission-controller.yaml
+kubectl create namespace dex
+kubectl create secret --namespace dex tls dex.localhost.tls --cert="$SCRIPT_DIR/ssl/server.crt" --key="$SCRIPT_DIR/ssl/server.key"
+kubectl create -f "$SCRIPT_DIR/dex.yaml"
 
-cat >webhook-configuration.yaml <<EOF
+kubectl create namespace opa
+
+kubectl -n opa create secret tls opa-server --cert=ssl/server.crt --key=ssl/server.key
+kubectl -n opa apply -f admission-controller.yaml
+
+kubectl label ns kube-system openpolicyagent.org/webhook=ignore
+kubectl label ns opa openpolicyagent.org/webhook=ignore
+
+cat <<EOF | kubectl apply -f -
 kind: ValidatingWebhookConfiguration
 apiVersion: admissionregistration.k8s.io/v1beta1
 metadata:
@@ -51,23 +71,20 @@ webhooks:
         apiVersions: ["*"]
         resources: ["*"]
     clientConfig:
-      caBundle: $(cat ca.crt | base64 | tr -d '\n')
+      caBundle: $(cat ssl/ca.crt | base64 | tr -d '\n')
       service:
         namespace: opa
         name: opa
 EOF
 
-kubectl label ns kube-system openpolicyagent.org/webhook=ignore
-kubectl label ns opa openpolicyagent.org/webhook=ignore
+# Apply the OPA rules, it is important to create it in the opa namespace as this is how OPA knows that this is a rule
+kubectl -n opa create configmap space-developer --from-file=space-developer.rego
 
-kubectl apply -f webhook-configuration.yaml
+# Apply CF CRDs
+kubectl apply -k $SCRIPT_DIR/../../cf-crd-explorations/config/crd
 
-kubectl create configmap ingress-whitelist --from-file=ingress-whitelist.rego
+# Create RBAC roles
+kubectl apply -f $SCRIPT_DIR/../cf-roles-model/rbac.yaml
 
-kubectl create -f qa-namespace.yaml
-kubectl create -f production-namespace.yaml
-
-# kubectl create -f ingress-ok.yaml -n production
-# kubectl create -f ingress-bad.yaml -n qa
-
-kubectl apply -f alice-prod-viewer.yaml
+# Create some sample resources
+kubectl apply --recursive -f $SCRIPT_DIR/../../cf-crd-explorations/config/samples/cf-crds
