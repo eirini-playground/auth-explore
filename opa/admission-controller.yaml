@@ -64,6 +64,30 @@ subjects:
   apiGroup: rbac.authorization.k8s.io
 
 ---
+# Allow OPA to replicate rolebindings
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: role-bindings-viewer
+rules:
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["rolebindings"]
+  verbs: ["get","list","watch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: opa-role-bindings-viewer
+roleRef:
+  kind: ClusterRole
+  name: role-bindings-viewer
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: Group
+  name: system:serviceaccounts:opa
+  apiGroup: rbac.authorization.k8s.io
+
+---
 kind: Service
 apiVersion: v1
 metadata:
@@ -136,6 +160,7 @@ spec:
           args:
             - "--replicate-cluster=v1/namespaces"
             - "--replicate-cluster=apps.cloudfoundry.org/v1alpha1/droplets"
+            - "--replicate-cluster=rbac.authorization.k8s.io/v1/rolebindings"
       volumes:
         - name: opa-server
           secret:

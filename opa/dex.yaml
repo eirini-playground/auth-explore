@@ -18,7 +18,7 @@ spec:
     spec:
       serviceAccountName: dex # This is created below
       containers:
-      - image: dexidp/dex:v2.27.0 #or quay.io/dexidp/dex:v2.26.0
+      - image: eirini/dex:v2.27.0-dirty # issues token wih hardcoded claim groups=["goo"]
         name: dex
         command: ["/usr/local/bin/dex", "serve", "/etc/dex/cfg/config.yaml"]
 

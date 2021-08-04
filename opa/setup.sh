@@ -32,6 +32,7 @@ nodes:
         oidc-ca-file: /etc/dex-ssl/ca.crt
         oidc-username-claim: email
         oidc-username-prefix: "oidc:"
+        oidc-groups-claim: groups
   extraPortMappings:
   - containerPort: 32000
     hostPort: 32000
