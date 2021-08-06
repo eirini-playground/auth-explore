@@ -5,4 +5,5 @@ dex-auth-public-client/ssl
 dex-pinniped/ssl
 dex-pinniped/terraform/.terraform*
 run-cfshim/ssl
+cross-cluster-orgs/ssl
 oidc-login-plugin/oidc-login-plugin
