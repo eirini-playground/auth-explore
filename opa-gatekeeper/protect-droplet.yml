@@ -1,0 +1,11 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: CFProtectObject
+metadata:
+  name: protectdroplet
+spec:
+  match:
+    kinds:
+      - apiGroups: ["apps.cloudfoundry.org"]
+        kinds: ["Droplet"]
+  parameters:
+    role: "space-developer"

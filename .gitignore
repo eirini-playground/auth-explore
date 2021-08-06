@@ -1,4 +1,5 @@
 opa/ssl
+opa-gatekeeper/ssl
 dex-auth/ssl
 dex-auth-public-client/ssl
 dex-pinniped/ssl

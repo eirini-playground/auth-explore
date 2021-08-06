@@ -1,0 +1,47 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: cfprotectobject
+spec:
+  crd:
+    spec:
+      names:
+        kind: CFProtectObject
+      validation:
+        # Schema for the `parameters` field
+        openAPIV3Schema:
+          properties:
+            role:
+              type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package kubernetes.admission
+
+        violation[{"msg": msg, "details": {}}] {
+          has_role
+          forbidden_change
+          msg := sprintf("%q can only change labels and annotations", [input.parameters.role])
+        }
+
+        has_role = true {
+            rolebindings = data.inventory.namespace[_]["rbac.authorization.k8s.io/v1"]["RoleBinding"]
+            some rolebinding, subject
+            rolebindings[rolebinding].subjects[subject].kind == "User"
+            rolebindings[rolebinding].subjects[subject].name == input.review.userInfo.username
+            rolebindings[rolebinding].roleRef.name == input.parameters.role
+        }
+
+        has_role = true {
+            rolebindings = data.inventory.namespace[_]["rbac.authorization.k8s.io/v1"]["RoleBinding"]
+            some rolebinding, subject, userGroup
+            rolebindings[rolebinding].subjects[subject].kind == "Group"
+            rolebindings[rolebinding].subjects[subject].name == input.review.userInfo.groups[userGroup]
+            rolebindings[rolebinding].roleRef.name == input.parameters.role
+        }
+
+        forbidden_change = true {
+          objBody = json.remove(input.review.object, ["metadata/annotations", "metadata/labels", "metadata/managedFields"])
+          oldObjBody = json.remove(input.review.oldObject, ["metadata/annotations", "metadata/labels", "metadata/managedFields"])
+          objBody != oldObjBody
+        }

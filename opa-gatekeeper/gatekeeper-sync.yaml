@@ -1,0 +1,23 @@
+apiVersion: config.gatekeeper.sh/v1alpha1
+kind: Config
+metadata:
+  name: config
+  namespace: "gatekeeper-system"
+spec:
+  sync:
+    syncOnly:
+      - group: ""
+        version: "v1"
+        kind: "Namespace"
+      - group: "rbac.authorization.k8s.io"
+        version: "v1"
+        kind: "RoleBinding"
+  validation:
+    # Requests for which we want to run traces
+    traces:
+      - kind:
+          group: "apps.cloudfoundry.org"
+          version: "v1"
+          kind: "Droplet"
+        # If dump is defined and set to `All`, also dump the state of OPA
+        dump: "All"

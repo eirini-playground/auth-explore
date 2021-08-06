@@ -2,8 +2,6 @@ package kubernetes.admission
 
 import data.kubernetes.rolebindings
 
-operations = {"CREATE","UPDATE"}
-
 deny[msg] {
   input.request.kind.kind == "Droplet"
   is_space_developer
