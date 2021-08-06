@@ -51,6 +51,10 @@ kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/
 # Tell gatekeeper what k8s objects to sync so that they are avaliable to rego rules
 kubectl apply -f "$SCRIPT_DIR/gatekeeper-sync.yaml"
 
+# Apply the gatekeeper rules
+kubectl apply -f "$SCRIPT_DIR/cf-protect-object.yml"
+kubectl apply -f "$SCRIPT_DIR/protect-droplet.yml"
+
 # Apply CF CRDs
 kubectl apply -k $SCRIPT_DIR/../../cf-crd-explorations/config/crd
 
