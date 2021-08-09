@@ -104,6 +104,15 @@ kubectl apply -f $SCRIPT_DIR/../cf-roles-model/rbac.yaml
 # Create some sample resources
 kubectl apply --recursive -f $SCRIPT_DIR/../../cf-crd-explorations/config/samples/cf-crds
 
+pushd $SCRIPT_DIR/multicluster-controller
+{
+  docker build --tag eirini/multi-cluster-controller:dev .
+  kind load docker-image --name cross-org-1 eirini/multi-cluster-controller:dev
+}
+popd
+kubectl apply -f $SCRIPT_DIR/multi-cluster-controller.yml
+kubectl -n mcc create configmap kubeconfig --from-file=$HOME/.kube/config
+
 echo Done
 echo In order to login run the following command:
 echo example-app --issuer https://$ip.nip.io:32000 --issuer-root-ca ./ssl/ca.crt --listen http://0.0.0.0:5555 --redirect-uri http://$ip.nip.io:5555/callback
