@@ -1,0 +1,26 @@
+---
+kind: Org
+apiVersion: code.cloudfoundy.org.org/v1
+metadata:
+  name: alice-org
+  namespace: org
+spec:
+  namespaces:
+  - cluster_context: "cross-org-1"
+    namespace: "alice-1"
+  - cluster_context: "cross-org-1"
+    namespace: "alice-2"
+  users: ["alice"]
+---
+kind: Org
+apiVersion: code.cloudfoundy.org.org/v1
+metadata:
+  name: bob-org
+  namespace: org
+spec:
+  namespaces:
+  - cluster_context: "cross-org-1"
+    namespace: "bob-1"
+  - cluster_context: "cross-org-2"
+    namespace: "bob-2"
+  users: ["bob"]

@@ -1,0 +1,86 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: org
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: org-controller
+  name: org-controller
+  namespace: org
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: org-controller
+  template:
+    metadata:
+      labels:
+        app: org-controller
+    spec:
+      serviceAccountName: org-controller
+      containers:
+      - image: eirini/org-controller:dev
+        imagePullPolicy: IfNotPresent
+        name: org
+        volumeMounts:
+        - name: cross-org-1
+          mountPath: /etc/cross-org-1
+        - name: cross-org-2
+          mountPath: /etc/cross-org-2
+        command: ["/usr/local/bin/org-controller"]
+      volumes:
+      - name: cross-org-1
+        configMap:
+          name: cross-org-1
+      - name: cross-org-2
+        configMap:
+          name: cross-org-2
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: org-controller
+  name: org-controller
+  namespace: org
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: org-controller
+rules:
+- apiGroups: [""]
+  resources: ["configmaps", "namespaces", "events"]
+  verbs: ["*"]
+- apiGroups: ["code.cloudfoundy.org.org"]
+  resources: ["orgs"]
+  verbs: ["*"]
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["rolebindings"]
+  verbs: ["*"]
+- apiGroups: ["coordination.k8s.io"]
+  resources: ["leases"]
+  verbs: ["*"]
+
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: org-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: org-controller
+subjects:
+- kind: ServiceAccount
+  name: org-controller
+  namespace: org
+
