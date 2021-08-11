@@ -5,11 +5,9 @@ metadata:
   name: alice-org
   namespace: org
 spec:
-  namespaces:
-  - cluster_context: "cross-org-1"
-    namespace: "alice-1"
-  - cluster_context: "cross-org-1"
-    namespace: "alice-2"
+  clusters:
+  - name: "cross-org-1"
+    namespaces: ["alice-1", "alice-2"]
   users: ["alice"]
 ---
 kind: Org
@@ -18,9 +16,9 @@ metadata:
   name: bob-org
   namespace: org
 spec:
-  namespaces:
-  - cluster_context: "cross-org-1"
-    namespace: "bob-1"
-  - cluster_context: "cross-org-2"
-    namespace: "bob-2"
+  clusters:
+  - name: "cross-org-1"
+    namespaces: ["bob-1"]
+  - name: "cross-org-2"
+    namespaces: ["bob-2"]
   users: ["bob"]

@@ -42,6 +42,7 @@ mkdir -p "$ORG_CRD_DIR"
 pushd "$ORG_CONTROLLER_ROOT"
 {
   go run vendor/sigs.k8s.io/controller-tools/cmd/controller-gen/main.go crd output:dir="$ORG_CRD_DIR" paths=./pkg/apis/...
+  rm -r "$ORG_CONTROLLER_ROOT/crds/"
   cp -r "$ORG_CRD_DIR" "$ORG_CONTROLLER_ROOT/crds/"
 }
 popd

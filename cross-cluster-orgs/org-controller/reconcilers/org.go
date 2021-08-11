@@ -6,15 +6,15 @@ import (
 
 	"code.cloudfoundry.org/lager"
 	orgv1 "code.cloudfoundry.org/org-controller/pkg/apis/org/v1"
-	orgscheme "code.cloudfoundry.org/org-controller/pkg/generated/clientset/versioned/scheme"
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
+
+const orgLabel = "code.cloudfoundry.org/org"
 
 type Org struct {
 	logger         lager.Logger
@@ -45,23 +45,27 @@ func (r *Org) Reconcile(ctx context.Context, request reconcile.Request) (reconci
 	err := r.client.Get(ctx, request.NamespacedName, org)
 	if err != nil {
 		if apierrors.IsNotFound(err) {
-			logger.Info("org-not-found")
+			err := r.reconcileDeletedOrg(logger, ctx, request.Name)
+			if err != nil {
+				return reconcile.Result{}, fmt.Errorf("failed to reconcile deleted org: %v", err)
+			}
 
 			return reconcile.Result{}, nil
 		}
 
 		logger.Error("failed-to-get-org", err)
 
-		return reconcile.Result{}, errors.Wrap(err, "failed to get lrp")
+		return reconcile.Result{}, errors.Wrap(err, "failed to get org")
 	}
 
-	for _, namespace := range org.Spec.Namespaces {
-		clusterClient, ok := r.clusterClients[namespace.ClusterContext]
+	for _, cluster := range org.Spec.Clusters {
+		clusterClient, ok := r.clusterClients[cluster.Name]
 		if !ok {
-			return reconcile.Result{}, fmt.Errorf("unknown cluster context: %q", namespace.ClusterContext)
+			return reconcile.Result{}, fmt.Errorf("unknown cluster context: %q", cluster.Name)
 		}
 
-		err = r.reconcileNamespace(logger, ctx, clusterClient, org, namespace)
+		nsLogger := logger.Session("reconcile namespace", lager.Data{"org": org.Name, "cluster": cluster.Name})
+		err = r.reconcileNamespaces(nsLogger, ctx, clusterClient, org, cluster.Namespaces)
 		if err != nil {
 			logger.Error("failed-to-reconcile", err)
 		}
@@ -70,32 +74,139 @@ func (r *Org) Reconcile(ctx context.Context, request reconcile.Request) (reconci
 	return reconcile.Result{}, err
 }
 
-func (r *Org) reconcileNamespace(
+func (r *Org) reconcileNamespaces(
 	logger lager.Logger,
 	ctx context.Context,
 	cl client.Client,
 	org *orgv1.Org,
-	orgNs orgv1.OrgNamespace) error {
-
-	ns := &corev1.Namespace{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: orgNs.Namespace,
-		},
-	}
-
-	err := ctrl.SetControllerReference(org, ns, orgscheme.Scheme)
+	namespaces []string) error {
+	toBeCreated, toBeDeleted, err := analyseNamespaces(ctx, cl, org.Name, namespaces)
 	if err != nil {
 		return err
 	}
 
-	err = cl.Create(ctx, ns)
-	if apierrors.IsAlreadyExists(err) {
-		logger.Info("namespace already exists", lager.Data{"clusterContext": orgNs.ClusterContext, "namespace": orgNs.Namespace})
-		return nil
+	for _, ns := range toBeCreated {
+		err := createNamespace(logger, ctx, cl, org, ns)
+		if err != nil {
+			return err
+		}
 	}
-	logger.Info("created namespace", lager.Data{"clusterContext": orgNs.ClusterContext, "namespace": orgNs.Namespace})
 
-	return err
+	for _, ns := range toBeDeleted {
+		err := deleteNamespace(logger, ctx, cl, ns)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
-func (r *Org) clientForClusterContext(clusterContext string) {}
+func (r *Org) reconcileDeletedOrg(logger lager.Logger, ctx context.Context, orgName string) error {
+	for _, cl := range r.clusterClients {
+		_, toBeDeleted, err := analyseNamespaces(ctx, cl, orgName, []string{})
+		if err != nil {
+			return fmt.Errorf("failed to analyse namespaces: %v", err)
+		}
+
+		for _, ns := range toBeDeleted {
+			err = deleteNamespace(logger, ctx, cl, ns)
+			if err != nil {
+				return fmt.Errorf("failed to delete namespace: %q %v", ns, err)
+			}
+		}
+	}
+
+	return nil
+}
+
+func createNamespace(
+	logger lager.Logger,
+	ctx context.Context,
+	cl client.Client,
+	org *orgv1.Org,
+	namespace string) error {
+
+	ns := &corev1.Namespace{
+		ObjectMeta: metav1.ObjectMeta{
+			Labels: map[string]string{
+				orgLabel: org.Name,
+			},
+			Name: namespace,
+		},
+	}
+
+	err := cl.Create(ctx, ns)
+	if apierrors.IsAlreadyExists(err) {
+		logger.Info("namespace already exists", lager.Data{"namespace": namespace})
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("failed to create namespace: %v", err)
+	}
+	logger.Info("created namespace", lager.Data{"namespace": namespace})
+
+	return nil
+}
+
+func deleteNamespace(
+	logger lager.Logger,
+	ctx context.Context,
+	cl client.Client,
+	namespace string) error {
+
+	ns := &corev1.Namespace{}
+	err := cl.Get(ctx, client.ObjectKey{Name: namespace}, ns)
+	if err != nil {
+		if apierrors.IsNotFound(err) {
+			logger.Info("namespace already deleted", lager.Data{"namespace": namespace})
+			return nil
+		}
+	}
+
+	err = cl.Delete(ctx, ns)
+	if err != nil {
+		return fmt.Errorf("failed to delete namespace: %v", err)
+	}
+	logger.Info("deleted namespace", lager.Data{"namespace": namespace})
+	return nil
+}
+
+func analyseNamespaces(ctx context.Context, clusterClient client.Client, orgName string, desiredNamespaces []string) ([]string /*to be created*/, []string /*to be deleted*/, error) {
+	toBeCreated := []string{}
+	toBeDeleted := []string{}
+
+	existingNamespacesList := corev1.NamespaceList{}
+	err := clusterClient.List(ctx, &existingNamespacesList, client.MatchingLabels{
+		orgLabel: orgName,
+	})
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to list namespaces: %v", err)
+	}
+
+	isExisting := map[string]struct{}{}
+
+	for _, ns := range existingNamespacesList.Items {
+		isExisting[ns.Name] = struct{}{}
+	}
+
+	isDesired := map[string]struct{}{}
+
+	for _, ns := range desiredNamespaces {
+		isDesired[ns] = struct{}{}
+	}
+
+	for ns := range isExisting {
+		if _, desired := isDesired[ns]; !desired {
+			toBeDeleted = append(toBeDeleted, ns)
+		}
+	}
+
+	for ns := range isDesired {
+		if _, existing := isExisting[ns]; !existing {
+			toBeCreated = append(toBeCreated, ns)
+		}
+	}
+
+	return toBeCreated, toBeDeleted, nil
+}

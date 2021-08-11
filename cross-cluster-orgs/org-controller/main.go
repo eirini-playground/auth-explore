@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -48,7 +49,7 @@ func main() {
 	mgr, err := manager.New(kubeConfig, managerOptions)
 	exitfIfError(err, "failed to create k8s controller runtime manager")
 
-	clusterClients, err := getClusterClients()
+	clusterClients, err := getClusterClients(logger)
 	exitfIfError(err, "failed to create cluster clients")
 
 	orgReconciler := reconcilers.NewOrg(logger, mgr.GetClient(), clusterClients)
@@ -80,7 +81,7 @@ func exitf(messageFormat string, args ...interface{}) {
 	exitIfError(fmt.Errorf(messageFormat, args...))
 }
 
-func getClusterClients() (map[string]client.Client, error) {
+func getClusterClients(logger lager.Logger) (map[string]client.Client, error) {
 	clusterNames := []string{"cross-org-1", "cross-org-2"}
 	result := map[string]client.Client{}
 
@@ -94,6 +95,12 @@ func getClusterClients() (map[string]client.Client, error) {
 		if err != nil {
 			return nil, err
 		}
+		go func() {
+			err := cluster.GetCache().Start(context.Background())
+			if err != nil {
+				logger.Error("failed to start cache", err, lager.Data{"clusterName": clusterName})
+			}
+		}()
 
 		result[clusterName] = cluster.GetClient()
 	}

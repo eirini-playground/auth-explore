@@ -18,13 +18,13 @@ type Org struct {
 }
 
 type OrgSpec struct {
-	Namespaces []OrgNamespace `json:"namespaces"`
-	Users      []string       `json:"users"`
+	Clusters []OrgCluster `json:"clusters"`
+	Users    []string     `json:"users"`
 }
 
-type OrgNamespace struct {
-	ClusterContext string `json:"cluster_context"`
-	Namespace      string `json:"namespace"`
+type OrgCluster struct {
+	Name       string   `json:"name"`
+	Namespaces []string `json:"namespaces"`
 }
 
 type OrgStatus struct{}
