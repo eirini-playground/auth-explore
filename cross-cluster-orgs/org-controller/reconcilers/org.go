@@ -8,6 +8,7 @@ import (
 	orgv1 "code.cloudfoundry.org/org-controller/pkg/apis/org/v1"
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
+	rbacv1 "k8s.io/api/rbac/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -87,6 +88,10 @@ func (r *Org) reconcileNamespaces(
 
 	for _, ns := range toBeCreated {
 		err := createNamespace(logger, ctx, cl, org, ns)
+		if err != nil {
+			return err
+		}
+		err = createRoleBindings(logger, ctx, cl, org, ns)
 		if err != nil {
 			return err
 		}
@@ -209,4 +214,41 @@ func analyseNamespaces(ctx context.Context, clusterClient client.Client, orgName
 	}
 
 	return toBeCreated, toBeDeleted, nil
+}
+
+func createRoleBindings(
+	logger lager.Logger,
+	ctx context.Context,
+	cl client.Client,
+	org *orgv1.Org,
+	namespace string) error {
+
+	for _, user := range org.Spec.Users {
+		for _, role := range user.Roles {
+			roleBinding := &rbacv1.RoleBinding{
+				ObjectMeta: metav1.ObjectMeta{
+					Namespace: namespace,
+					Name:      fmt.Sprintf("%s-%s", user.Name, role),
+				},
+				Subjects: []rbacv1.Subject{
+					{
+						APIGroup: "rbac.authorization.k8s.io",
+						Kind:     "User",
+						Name:     user.Name,
+					},
+				},
+				RoleRef: rbacv1.RoleRef{
+					APIGroup: "rbac.authorization.k8s.io",
+					Kind:     "ClusterRole",
+					Name:     role,
+				},
+			}
+			if err := cl.Create(ctx, roleBinding); err != nil {
+				return fmt.Errorf("failed to create role binding: %v", err)
+			}
+			logger.Info("created rolebinding", lager.Data{"namespace": namespace, "user": user.Name, "role": role})
+		}
+	}
+
+	return nil
 }

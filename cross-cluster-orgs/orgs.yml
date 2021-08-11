@@ -8,7 +8,9 @@ spec:
   clusters:
   - name: "cross-org-1"
     namespaces: ["alice-1", "alice-2"]
-  users: ["alice"]
+  users:
+  - name: "oidc:alice@vcap.me"
+    roles: ["space-developer"]
 ---
 kind: Org
 apiVersion: code.cloudfoundy.org.org/v1
@@ -21,4 +23,6 @@ spec:
     namespaces: ["bob-1"]
   - name: "cross-org-2"
     namespaces: ["bob-2"]
-  users: ["bob"]
+  users:
+  - name: "oidc:bob@vcap.me"
+    roles: ["space-developer"]

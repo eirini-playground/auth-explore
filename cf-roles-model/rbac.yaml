@@ -103,9 +103,8 @@ rules:
   verbs: ["get", "watch", "list"] # `command` field redacted. Not possible unless command is stored in a distinct resource
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
-  namespace: default
   name: space-auditor
 rules:
 - apiGroups: ["apps.cloudfoundry.org"]
@@ -128,9 +127,8 @@ rules:
   verbs: ["get", "watch", "list"] # `command` field redacted. Not possible unless command is stored in a distinct resource
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
-  namespace: default
   name: space-manager
 rules:
 - apiGroups: ["apps.cloudfoundry.org"]
@@ -153,9 +151,8 @@ rules:
   verbs: ["get", "watch", "list"] # `command` field redacted. Not possible unless command is stored in a distinct resource
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
-  namespace: default
   name: space-developer
 rules:
 - apiGroups: ["apps.cloudfoundry.org"]
@@ -182,9 +179,8 @@ rules:
   verbs: ["get", "update"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
-  namespace: default
   name: space-supporter
 rules:
 - apiGroups: ["apps.cloudfoundry.org"]

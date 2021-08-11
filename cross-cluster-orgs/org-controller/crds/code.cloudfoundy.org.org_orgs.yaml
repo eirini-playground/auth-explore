@@ -49,7 +49,14 @@ spec:
                 type: array
               users:
                 items:
-                  type: string
+                  properties:
+                    name:
+                      type: string
+                    roles:
+                      items:
+                        type: string
+                      type: array
+                  type: object
                 type: array
             type: object
           status:

@@ -103,6 +103,11 @@ data:
       hash: $passwd_hash
       username: "alice"
       userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"
+    - email: "bob@vcap.me"
+      # bcrypt hash of the string "password"
+      hash: $passwd_hash
+      username: "bob"
+      userID: "6aea7e79-474b-4195-b3f2-dc4ea2b28470"
 EOF
 
 kubectl create -f "$SCRIPT_DIR/dex.yaml"
