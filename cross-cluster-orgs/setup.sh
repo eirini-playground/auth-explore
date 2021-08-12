@@ -77,7 +77,7 @@ metadata:
   namespace: dex
 data:
   config.yaml: |
-    issuer: https://34.142.56.162.nip.io:32000
+    issuer: https://$ip.nip.io:32000
     storage:
       type: kubernetes
       config:
