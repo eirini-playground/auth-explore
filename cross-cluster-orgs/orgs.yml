@@ -2,27 +2,36 @@
 kind: Org
 apiVersion: code.cloudfoundy.org.org/v1
 metadata:
-  name: alice-org
+  name: org1
   namespace: org
 spec:
-  clusters:
-  - name: "cross-org-1"
-    namespaces: ["alice-1", "alice-2"]
+  spaces:
+  - name: space1
+    cluster_name: cross-org-1
+    users:
+    - name: "alice"
+      roles: ["space-developer"]
+  - name: space2
+    cluster_name: cross-org-1
+    users:
+    - name: "bob"
+      roles: ["space-developer"]
   users:
-  - name: "oidc:alice@vcap.me"
-    roles: ["space-developer"]
+  - name: "will"
+    roles: ["org-manager"]
 ---
 kind: Org
 apiVersion: code.cloudfoundy.org.org/v1
 metadata:
-  name: bob-org
+  name: org2
   namespace: org
 spec:
-  clusters:
-  - name: "cross-org-1"
-    namespaces: ["bob-1"]
-  - name: "cross-org-2"
-    namespaces: ["bob-2"]
+  spaces:
+  - name: space1
+    cluster_name: cross-org-1
+    users:
+    - name: "alice"
+      roles: ["space-developer"]
   users:
-  - name: "oidc:bob@vcap.me"
-    roles: ["space-developer"]
+  - name: "andy"
+    roles: ["org-manager"]

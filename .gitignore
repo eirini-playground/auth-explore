@@ -5,6 +5,5 @@ dex-auth-public-client/ssl
 dex-pinniped/ssl
 dex-pinniped/terraform/.terraform*
 run-cfshim/ssl
-cross-cluster-orgs/ssl
 cross-cluster-orgs/kubeconfigs
 oidc-login-plugin/oidc-login-plugin

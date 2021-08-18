@@ -18,18 +18,19 @@ type Org struct {
 }
 
 type OrgSpec struct {
-	Clusters []OrgCluster `json:"clusters"`
-	Users    []OrgUser    `json:"users"`
+	Users  []User  `json:"users"`
+	Spaces []Space `json:"spaces"`
 }
 
-type OrgCluster struct {
-	Name       string   `json:"name"`
-	Namespaces []string `json:"namespaces"`
-}
-
-type OrgUser struct {
+type User struct {
 	Name  string   `json:"name"`
 	Roles []string `json:"roles"`
+}
+
+type Space struct {
+	Name        string `json:"name"`
+	ClusterName string `json:"cluster_name"`
+	Users       []User `json:"users"`
 }
 
 type OrgStatus struct{}

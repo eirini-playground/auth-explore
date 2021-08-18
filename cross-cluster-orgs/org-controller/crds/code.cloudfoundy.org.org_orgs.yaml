@@ -36,14 +36,23 @@ spec:
             type: object
           spec:
             properties:
-              clusters:
+              spaces:
                 items:
                   properties:
+                    cluster_name:
+                      type: string
                     name:
                       type: string
-                    namespaces:
+                    users:
                       items:
-                        type: string
+                        properties:
+                          name:
+                            type: string
+                          roles:
+                            items:
+                              type: string
+                            type: array
+                        type: object
                       type: array
                   type: object
                 type: array
