@@ -59,6 +59,11 @@ func (r *Org) Reconcile(ctx context.Context, request reconcile.Request) (reconci
 		return reconcile.Result{}, errors.Wrap(err, "failed to get org")
 	}
 
+	globalUsers, err := r.getGlobalUsers(ctx)
+	if err != nil {
+		return reconcile.Result{}, fmt.Errorf("failed to get global users: %w", err)
+	}
+
 	for _, space := range org.Spec.Spaces {
 		clusterClient, ok := r.clusterClients[space.ClusterName]
 		if !ok {
@@ -66,7 +71,7 @@ func (r *Org) Reconcile(ctx context.Context, request reconcile.Request) (reconci
 		}
 
 		nsLogger := logger.Session("reconcile namespace", lager.Data{"org": org.Name, "cluster": space.ClusterName})
-		err = r.reconcileSpace(nsLogger, ctx, clusterClient, org, space)
+		err = r.reconcileSpace(nsLogger, ctx, clusterClient, org, space, globalUsers)
 		if err != nil {
 			logger.Error("failed-to-reconcile", err)
 		}
@@ -75,12 +80,28 @@ func (r *Org) Reconcile(ctx context.Context, request reconcile.Request) (reconci
 	return reconcile.Result{}, err
 }
 
+func (r *Org) getGlobalUsers(ctx context.Context) ([]orgv1.User, error) {
+	globalUsers := &orgv1.GlobalUserList{}
+	if err := r.client.List(ctx, globalUsers); err != nil {
+		return nil, err
+	}
+
+	var users []orgv1.User
+	for _, globalUser := range globalUsers.Items {
+		users = append(users, orgv1.User{Name: globalUser.Name, Roles: globalUser.Spec.Roles})
+	}
+
+	return users, nil
+}
+
 func (r *Org) reconcileSpace(
 	logger lager.Logger,
 	ctx context.Context,
 	cl client.Client,
 	org *orgv1.Org,
-	space orgv1.Space) error {
+	space orgv1.Space,
+	globalUsers []orgv1.User,
+) error {
 
 	namespace := org.Name + "-" + space.Name
 	err := createNamespace(logger, ctx, cl, org, namespace)
@@ -88,10 +109,15 @@ func (r *Org) reconcileSpace(
 		return err
 	}
 
+	err = createRoleBindings(logger, ctx, cl, globalUsers, globalLevel, namespace)
+	if err != nil {
+		return err
+	}
+
 	users := []orgv1.User{}
 	users = append(users, org.Spec.Users...)
 	users = append(users, space.Users...)
-	err = createRoleBindings(logger, ctx, cl, users, namespace)
+	err = createRoleBindings(logger, ctx, cl, users, otherLevel, namespace)
 	if err != nil {
 		return err
 	}
@@ -144,6 +170,7 @@ func createRoleBindings(
 	ctx context.Context,
 	cl client.Client,
 	users []orgv1.User,
+	level string,
 	namespace string) error {
 
 	for _, user := range users {
@@ -152,6 +179,9 @@ func createRoleBindings(
 				ObjectMeta: metav1.ObjectMeta{
 					Namespace: namespace,
 					Name:      fmt.Sprintf("%s-%s", user.Name, role),
+					Labels: map[string]string{
+						roleLevelLabel: level,
+					},
 				},
 				Subjects: []rbacv1.Subject{
 					{

@@ -8,7 +8,6 @@ import (
 
 	"code.cloudfoundry.org/eirini/util"
 	"code.cloudfoundry.org/lager"
-	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	"k8s.io/client-go/tools/clientcmd"
@@ -24,6 +23,22 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 )
 
+func getSubjectUserName(obj client.Object) []string {
+	rolebinding, ok := obj.(*rbacv1.RoleBinding)
+	if !ok {
+		return nil
+	}
+
+	for _, subject := range rolebinding.Subjects {
+		// assume only one for our purposes
+		if subject.Kind == "User" {
+			return []string{subject.Name}
+		}
+	}
+
+	return nil
+}
+
 func main() {
 	if err := kscheme.AddToScheme(orgscheme.Scheme); err != nil {
 		exitf("failed to add the org scheme to the ORG CRD scheme: %v", err)
@@ -31,8 +46,6 @@ func main() {
 
 	kubeConfig, err := clientcmd.BuildConfigFromFlags("", "")
 	exitfIfError(err, "Failed to build kubeconfig")
-
-	exitfIfError(err, "Failed to create k8s runtime client")
 
 	logger := lager.NewLogger("org-controller")
 	logger.RegisterSink(lager.NewPrettySink(os.Stdout, lager.DEBUG))
@@ -57,9 +70,15 @@ func main() {
 	err = builder.
 		ControllerManagedBy(mgr).
 		For(&orgv1.Org{}).
-		Owns(&corev1.Namespace{}).
-		Owns(&rbacv1.RoleBinding{}).
 		Complete(orgReconciler)
+	exitfIfError(err, "Failed to build controller")
+
+	globalUserReconciler := reconcilers.NewGlobalUser(logger, mgr.GetClient(), clusterClients)
+
+	err = builder.
+		ControllerManagedBy(mgr).
+		For(&orgv1.GlobalUser{}).
+		Complete(globalUserReconciler)
 	exitfIfError(err, "Failed to build controller")
 
 	err = mgr.Start(ctrl.SetupSignalHandler())
@@ -95,6 +114,12 @@ func getClusterClients(logger lager.Logger) (map[string]client.Client, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		err = cluster.GetFieldIndexer().IndexField(context.Background(), &rbacv1.RoleBinding{}, reconcilers.SubjectNameIndex, getSubjectUserName)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create index %q on cluster %q", reconcilers.SubjectNameIndex, clusterName)
+		}
+
 		go func() {
 			err := cluster.GetCache().Start(context.Background())
 			if err != nil {

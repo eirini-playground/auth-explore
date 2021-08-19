@@ -1,0 +1,6 @@
+kind: GlobalUser
+apiVersion: code.cloudfoundy.org.org/v1
+metadata:
+  name: slightlylesssuperuser
+spec:
+  roles: ["cf-admin-read-only"]

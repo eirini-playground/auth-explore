@@ -60,7 +60,7 @@ rules:
   resources: ["configmaps", "namespaces", "events"]
   verbs: ["*"]
 - apiGroups: ["code.cloudfoundy.org.org"]
-  resources: ["orgs"]
+  resources: ["orgs", "globalusers"]
   verbs: ["*"]
 - apiGroups: ["rbac.authorization.k8s.io"]
   resources: ["rolebindings"]

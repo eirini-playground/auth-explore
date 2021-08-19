@@ -30,6 +30,8 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 		SchemeGroupVersion,
 		&Org{},
 		&OrgList{},
+		&GlobalUser{},
+		&GlobalUserList{},
 	)
 
 	meta_v1.AddToGroupVersion(scheme, SchemeGroupVersion)

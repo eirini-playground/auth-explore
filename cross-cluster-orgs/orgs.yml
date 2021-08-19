@@ -3,35 +3,40 @@ kind: Org
 apiVersion: code.cloudfoundy.org.org/v1
 metadata:
   name: org1
-  namespace: org
 spec:
   spaces:
   - name: space1
     cluster_name: cross-org-1
     users:
     - name: "alice"
-      roles: ["space-developer"]
+      roles: ["cf-space-developer"]
   - name: space2
     cluster_name: cross-org-1
     users:
     - name: "bob"
-      roles: ["space-developer"]
+      roles: ["cf-space-developer"]
   users:
   - name: "will"
-    roles: ["org-manager"]
+    roles: ["cf-org-manager"]
 ---
 kind: Org
 apiVersion: code.cloudfoundy.org.org/v1
 metadata:
   name: org2
-  namespace: org
 spec:
   spaces:
   - name: space1
     cluster_name: cross-org-1
     users:
     - name: "alice"
-      roles: ["space-developer"]
+      roles: ["cf-space-developer"]
   users:
   - name: "andy"
-    roles: ["org-manager"]
+    roles: ["cf-org-manager"]
+---
+kind: GlobalUser
+apiVersion: code.cloudfoundy.org.org/v1
+metadata:
+  name: superuser
+spec:
+  roles: ["cf-admin"]
