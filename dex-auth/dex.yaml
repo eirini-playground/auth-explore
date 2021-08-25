@@ -43,6 +43,10 @@ spec:
             secretKeyRef:
               name: github-client
               key: client-secret
+        - name: KUBERNETES_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
 
         readinessProbe:
           httpGet:
