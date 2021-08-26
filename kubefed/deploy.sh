@@ -27,6 +27,8 @@ pushd $KUBEFED_DIR
 }
 popd
 
+kubefedctl federate --filename ../cf-roles-model/rbac.yaml | kubectl apply -f -
+
 kubectl create ns federate-me
 kubefedctl federate ns federate-me
 
