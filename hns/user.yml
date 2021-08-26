@@ -1,0 +1,12 @@
+kind: User
+apiVersion: code.cloudfoundy.org.org/v1
+metadata:
+  name: bob
+spec:
+- globalRoles: []
+- orgs:
+  - name: foo
+    roles: []
+    spaces:
+    - name: bar
+      roles: []
