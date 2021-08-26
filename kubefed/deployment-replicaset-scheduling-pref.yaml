@@ -1,0 +1,8 @@
+apiVersion: scheduling.kubefed.io/v1alpha1
+kind: ReplicaSchedulingPreference
+metadata:
+  name: nginx
+  namespace: federate-me
+spec:
+  targetKind: FederatedDeployment
+  totalReplicas: 6
