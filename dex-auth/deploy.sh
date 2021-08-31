@@ -30,7 +30,7 @@ nodes:
         oidc-issuer-url: https://dex.vcap.me:32000
         oidc-client-id: example-app
         oidc-ca-file: /etc/dex-ssl/ca.pem
-        oidc-username-claim: preferred_username
+        oidc-username-claim: email
         oidc-username-prefix: "oidc:"
   extraPortMappings:
   - containerPort: 32000

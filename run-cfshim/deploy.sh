@@ -13,6 +13,8 @@ exit 1
 
 $DEX_AUTH_PATH/deploy.sh
 
+kubectl apply --filename https://github.com/pivotal/kpack/releases/download/v0.3.1/release-0.3.1.yaml
+
 kubectl create namespace cf-workloads
 helm install eirini-controller https://github.com/cloudfoundry-incubator/eirini-controller/releases/download/v0.1.0/eirini-controller-0.1.0.tgz
 make -C "$CF_CRD_EXPLORE_PATH" install
