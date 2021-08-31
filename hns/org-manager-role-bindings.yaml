@@ -1,0 +1,59 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: charlie-org-manger
+  namespace: org1
+subjects:
+- kind: User
+  name: charlie
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  apiGroup: rbac.authorization.k8s.io
+  name: cf-org-manager
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: charlie-space-manager
+  namespace: org1
+  annotations:
+    propagate.hnc.x-k8s.io/none: "true"
+subjects:
+- kind: User
+  name: charlie
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  apiGroup: rbac.authorization.k8s.io
+  name: cf-space-manager
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: evan-org-manger
+  namespace: org2
+subjects:
+- kind: User
+  name: evan
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  apiGroup: rbac.authorization.k8s.io
+  name: cf-org-manager
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: evan-space-manager
+  namespace: org2
+  annotations:
+    propagate.hnc.x-k8s.io/none: "true"
+subjects:
+- kind: User
+  name: evan
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  apiGroup: rbac.authorization.k8s.io
+  name: cf-space-manager
