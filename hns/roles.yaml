@@ -33,12 +33,3 @@ rules:
 - apiGroups: [""]
   resources: ["pods"]
   verbs: ["get", "watch", "list", "create", "delete", "update", "patch"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: hns-namespace-manager
-rules:
-- apiGroups: ["hnc.x-k8s.io"]
-  resources: ["SubnamespaceAnchor"]
-  verbs: ["create", "delete", "update", "patch", "get", "watch", "list"]

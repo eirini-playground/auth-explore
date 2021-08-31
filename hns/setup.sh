@@ -39,9 +39,7 @@ if ! kind get clusters | grep -q "$clusterName"; then
   kubectl label ns kube-public hnc.x-k8s.io/excluded-namespace=true --overwrite
   kubectl label ns kube-node-lease hnc.x-k8s.io/excluded-namespace=true --overwrite
   kubectl apply -f https://github.com/kubernetes-sigs/multi-tenancy/releases/download/hnc-${hncVersion}/hnc-manager.yaml
-  date
   kubectl rollout status deployment/hnc-controller-manager -w -n hnc-system
-  date
   sleep 10
 fi
 
