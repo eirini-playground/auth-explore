@@ -53,12 +53,16 @@ kubectl hns create -n cf org2 --as dave
 waitForNS cf org1
 waitForNS cf org2
 
+kubectl label namespaces org1 cloudfoundry.org/org=true
+kubectl label namespaces org2 cloudfoundry.org/org=true
+
 kubectl apply -f $SCRIPT_DIR/org-manager-role-bindings.yaml
 
 kubectl hns create -n org1 space1 --as charlie
 kubectl hns create -n org1 space2 --as charlie
 kubectl hns create -n org2 space3 --as evan
 kubectl hns create -n org2 space4 --as evan
+kubectl hns create -n org2 space5 --as dave
 
 waitForNS org1 space1
 waitForNS org2 space3
@@ -66,5 +70,7 @@ waitForNS org2 space3
 kubectl apply -f $SCRIPT_DIR/developer-role-bindings.yaml
 kubectl get pods -n space1 --as alice
 kubectl get pods -n space3 --as bob
+kubectl get pods -n space1 --as charlie
+kubectl get pods -n space3 --as dave
 
 echo Done
