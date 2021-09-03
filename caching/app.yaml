@@ -1,0 +1,14 @@
+apiVersion: workloads.cloudfoundry.org/v1alpha1
+kind: CFApp
+metadata:
+  name: the-app
+  namespace: ns-001
+spec:
+  currentDropletRef:
+    name: ""
+  desiredState: STOPPED
+  lifecycle:
+    data:
+      stack: ""
+    type: buildpack
+  name: my-app
