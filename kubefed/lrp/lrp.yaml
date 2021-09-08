@@ -1,0 +1,15 @@
+apiVersion: eirini.cloudfoundry.org/v1
+kind: LRP
+metadata:
+  name: mylrp
+  namespace: federate-me
+  labels:
+    isolationSegment: private
+spec:
+  selector:
+    matchLabels:
+      guid: mylrp
+  GUID: mylrp
+  diskMB: 256
+  image: eirini/dorini
+  replicas: 6

@@ -1,0 +1,11 @@
+apiVersion: scheduling.kubefed.io/v1alpha1
+kind: ReplicaSchedulingPreference
+metadata:
+  name: mylrp
+  namespace: federate-me
+spec:
+  targetKind: FederatedLRP
+  totalReplicas: 6
+  rebalance: true
+  intersectWithClusterSelector: true
+

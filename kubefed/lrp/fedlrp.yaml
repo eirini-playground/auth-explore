@@ -1,0 +1,19 @@
+---
+apiVersion: types.kubefed.io/v1beta1
+kind: FederatedLRP
+metadata:
+  name: mylrp
+  namespace: federate-me
+spec:
+  placement:
+    clusterSelector:
+      matchLabels:
+        isolationSegment: private
+  template:
+    spec:
+      GUID: mylrp
+      diskMB: 256
+      image: eirini/dorini
+      selector:
+        matchLabels:
+          guid: mylrp
