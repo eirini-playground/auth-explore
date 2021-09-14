@@ -7,27 +7,25 @@ import org.cloudfoundry.reactor.ConnectionContext;
 import org.cloudfoundry.reactor.DefaultConnectionContext;
 import org.cloudfoundry.reactor.TokenProvider;
 import org.cloudfoundry.reactor.client.ReactorCloudFoundryClient;
-import org.cloudfoundry.reactor.tokenprovider.PasswordGrantTokenProvider;
+import org.cloudfoundry.reactor.tokenprovider.K8sTokenProvider;
 
 public class App
 {
     public static void main( String[] args )
     {
         String apiHost = ensureEnv("CF_API_HOST");
-        String username = ensureEnv("CF_USERNAME");
-        String password = ensureEnv("CF_PASSWORD");
+        String port = ensureEnv("CF_PORT");
+        String secure = ensureEnv("CF_SECURE");
         String org = ensureEnv("CF_ORG");
         String space = ensureEnv("CF_SPACE");
 
         ConnectionContext connectionContext = DefaultConnectionContext.builder()
             .apiHost(apiHost)
-            .skipSslValidation(true)
+            .port(Integer.parseInt(port))
+            .secure(secure.equals("true"))
             .build();
 
-        TokenProvider tokenProvider = PasswordGrantTokenProvider.builder()
-            .username(username)
-            .password(password)
-            .build();
+        TokenProvider tokenProvider = K8sTokenProvider.builder().build();
 
         CloudFoundryClient client = ReactorCloudFoundryClient.builder()
             .connectionContext(connectionContext)
